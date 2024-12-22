@@ -1,4 +1,6 @@
 require("dotenv").config(); // Load environment variables from .env file
+const mongoose = require("mongoose");
+
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
@@ -29,7 +31,7 @@ const test = "jjj";
 const app = express();
 app.use("/images", express.static("images"));
 // Connect MongoDB
-connectDB();
+// connectDB();
 
 // Middleware
 app.use(express.json()); // Parse JSON bodies
@@ -89,6 +91,19 @@ app.use(errorHandler); // Enable custom error handling
 
 // Start Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// app.listen(PORT, () => {
+//   console.log(`Server running on port ${PORT}`);
+// });
+
+const CONNECTION_URL = process.env.CONNECTION_URL;
+
+mongoose
+  .connect(CONNECTION_URL)
+  .then(() =>
+    app.listen(PORT, () => {
+      console.log(`Server Running on ${PORT}`);
+    })
+  )
+  .catch(error => console.log(error.message));
+
+mongoose.set("strictQuery", true);
